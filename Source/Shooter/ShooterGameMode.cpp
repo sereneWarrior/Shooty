@@ -7,7 +7,7 @@
 AShooterGameMode::AShooterGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("Blueprint'/Game/Character/Shooty/BP_Shooty.BP_Shooty_C'"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("Blueprint'/Game/MetaHumans/Bernice/BP_Bernice.BP_Bernice_C'"));
 	UE_LOG(LogTemp, Warning, TEXT("Setup "));
 	
 	if (PlayerPawnBPClass.Class != NULL)

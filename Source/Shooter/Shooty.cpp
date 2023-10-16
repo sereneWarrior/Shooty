@@ -104,14 +104,7 @@ void AShooty::Move(const FInputActionValue& Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
 
-		// Calculate World direction
-		const FVector RightDir = UKismetMathLibrary::GetRightVector(Rotation);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		const FVector ForwardDir = UKismetMathLibrary::GetForwardVector(Rotation);
-
-		UE_LOG(LogTemp, Warning, TEXT("Right %s"), *RightDir.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Right Mat %s"), *RightDirection.ToString());
-		// Set movement
+		// Calculate World direction (forward & right) & set movement
 		AddMovementInput(UKismetMathLibrary::GetRightVector(Rotation), MoveAxisVector.X);
 		AddMovementInput(UKismetMathLibrary::GetForwardVector(Rotation), MoveAxisVector.Y);
 	}
