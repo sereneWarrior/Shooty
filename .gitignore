@@ -1,6 +1,7 @@
 #Folders
 Content/Assets/*
-Content/MetaHumans/*
+Content/Character/UE4_Mannequin/*
+Content/Character/MetaHumans/*
 
 # Visual Studio 2015 user specific files
 .vs/

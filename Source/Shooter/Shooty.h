@@ -37,7 +37,14 @@ class SHOOTER_API AShooty : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Body;
 
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float BackwardsWalkingSpeed = 45.0f;
+
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float ForwardWalkingSpeed = 250.0f;
 public:
 	// Sets default values for this character's properties
 	AShooty();
@@ -55,5 +62,4 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

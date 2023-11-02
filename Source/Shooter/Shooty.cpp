@@ -22,11 +22,19 @@ AShooty::AShooty()
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// Character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+	GetMesh();
+
+	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->AirControl = 0.35f;
+	GetCharacterMovement()->MaxWalkSpeed = 250.0f;
+	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
 	// Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -98,6 +106,16 @@ void AShooty::Look(const FInputActionValue& Value)
 void AShooty::Move(const FInputActionValue& Value)
 {
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
+	
+	// Change walk speed when moving backwards.
+	if (MoveAxisVector.Y < 0)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BackwardsWalkingSpeed;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = ForwardWalkingSpeed;
+	}
 
 	if (Controller != nullptr)
 	{
