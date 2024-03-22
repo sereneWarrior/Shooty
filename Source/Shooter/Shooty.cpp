@@ -12,6 +12,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include <Kismet/KismetMathLibrary.h>
+#include <Kismet/GameplayStatics.h>
 
 
 // Sets default values
@@ -22,12 +23,13 @@ AShooty::AShooty()
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	// Character movement
+	// TODO: Toggle when moving.
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetMesh();
 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -52,22 +54,19 @@ AShooty::AShooty()
 void AShooty::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
+	// Set up input mapping context.
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
-		
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			if (DefaultMappingContext == nullptr)
-			{
-					UE_LOG(LogTemp, Warning, TEXT("Bagin"));
-			}
-			
+		{			
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
+	// Limit Camera Pitch( up/down) rotation.
+	//TODO: Make value BP editable.
+	auto CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	CameraManager->ViewPitchMax = ViewPitchMax;
+	CameraManager->ViewPitchMin = ViewPitchMin;
 }
 
 // Called every frame
@@ -105,6 +104,7 @@ void AShooty::Look(const FInputActionValue& Value)
 
 void AShooty::Move(const FInputActionValue& Value)
 {
+	
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	
 	// Change walk speed when moving backwards.

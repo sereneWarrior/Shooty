@@ -62,4 +62,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(Category = Camera, EditAnywhere)
+	float ViewPitchMax = 40.0f;
+
+	UPROPERTY(Category = Camera, EditAnywhere)
+	float ViewPitchMin = -40.0f;
 };
