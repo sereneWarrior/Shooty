@@ -2,6 +2,9 @@
 Content/Assets/*
 Content/Character/UE4_Mannequin/*
 Content/Character/MetaHumans/*
+Content/Cinematics/*
+Content/NewWorld.umap
+
 
 # Visual Studio 2015 user specific files
 .vs/
