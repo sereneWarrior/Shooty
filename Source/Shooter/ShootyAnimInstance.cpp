@@ -7,8 +7,11 @@
 // TODO: Is this needed?
 void FBaseAnimInstanceProxy::SetVelocityData()
 {
-	OwnerAnimInstance->C_Velocity = CharacterMovement->Velocity;
-	OwnerAnimInstance->C_Velocity2D = FVector(OwnerAnimInstance->C_Velocity.X, OwnerAnimInstance->C_Velocity.Y, 0.0f);
+	TRACE_CPUPROFILER_EVENT_SCOPE_STR("FBaseAnimInstanceProxy::SetVelocityData");
+	if (!CharacterMovement)
+		return;
+	//OwnerAnimInstance->C_Velocity = CharacterMovement->Velocity;
+	//OwnerAnimInstance->C_Velocity2D = FVector(OwnerAnimInstance->C_Velocity.X, OwnerAnimInstance->C_Velocity.Y, 0.0f);
 }
 
 void FBaseAnimInstanceProxy::Initialize(UAnimInstance* AnimInstance)
@@ -26,29 +29,57 @@ void FBaseAnimInstanceProxy::Initialize(UAnimInstance* AnimInstance)
 		//Owner = Cast<AShooty>(Owner);
 	}
 }
-//
-//void FBaseAnimInstanceProxy::Update(float DeltaSeconds)
-//{
-//	
-//}
-//
-//void FBaseAnimInstanceProxy::PreUpdate(UAnimInstance* AnimInstance, float DeltaSeconds)
-//{
-//}
-//
-//void FBaseAnimInstanceProxy::PostUpdate(UAnimInstance* AnimInstance) const
-//{
-//}
 
-void UShootyAnimInstance::SetVelocity()
+void FBaseAnimInstanceProxy::Update(float DeltaSeconds)
+{
+	SetVelocityData();
+}
+
+
+void UShootyAnimInstance::NativeBeginPlay()
+{
+	Owner = Cast<AShooty>(GetOwningActor());
+	if (Owner)
+	{
+		CharacterMovement = Owner->GetCharacterMovement();
+	}
+}
+
+void UShootyAnimInstance::NativeThreadSafeUpdateAnimation(float _DeltaSeconds)
+{
+	if (!CharacterMovement)
+		return;
+
+	UpdateVelocity();
+	UpdateCharacterWorldRotation();
+	UpdateMovementStatus();
+}
+
+void UShootyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+{
+	
+}
+
+void UShootyAnimInstance::UpdateVelocity()
 {
 	// Trace Tag for Animation Insights
-	TRACE_CPUPROFILER_EVENT_SCOPE_STR("Fancy move");
+	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateVelocity");
+	C_Velocity2D = FVector(CharacterMovement->Velocity.X, CharacterMovement->Velocity.Y, 0.0f);
+}
 
-	Owner = Cast<AShooty>(GetOwningActor());
-	if (!Owner)
-		return;
-	C_Velocity = FVector::ZeroVector;
-	C_Velocity2D = FVector(C_Velocity.X, C_Velocity.Y, 0.0f);
-	
+void UShootyAnimInstance::UpdateCharacterWorldRotation()
+{
+	// Trace Tag for Animation Insights
+	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateRotation");
+	CharacterWorldRotation = Owner->GetActorRotation();
+}
+
+void UShootyAnimInstance::UpdateMovementStatus()
+{
+	// Trace Tag for Animation Insights
+	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateMovementStatus");
+	//Only eveluate walking movementnot jumping.
+	C_Acceleration2D = FVector(CharacterMovement->GetCurrentAcceleration().X, CharacterMovement->GetCurrentAcceleration().Y, 0.0f);
+	// If Acceleration vetor length is close to 0 no movement happens.
+	IsMoving = !FMath::IsNearlyEqual(C_Acceleration2D.Length(), 0.0f, 0.001f);
 }

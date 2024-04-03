@@ -13,6 +13,7 @@
 #include "ShootyAnimInstance.generated.h"
 class UShootyAnimInstance;
 
+// TODO: Remove Proxy and use NativeThreadSafeUpdateAnimation instead.
 USTRUCT(BlueprintType)
 struct SHOOTER_API FBaseAnimInstanceProxy : public FAnimInstanceProxy
 {
@@ -24,7 +25,7 @@ protected:
 	// Called on AnimInstance initialisation.
 	virtual void Initialize(UAnimInstance* AnimInstance) override;
 	// Runs on Anim thread, does calculations and updates varaibles inside proxy.
-	//virtual void Update(float DeltaSeconds) override;
+	virtual void Update(float DeltaSeconds) override;
 	//// Called on gamethrerad before update, to copy any game data into proxy (anim instance, character, world etc.)
 	//virtual void PreUpdate(UAnimInstance* AnimInstance, float DeltaSeconds) override;
 	////Called on game thread, after update to copy updated data into anim instance
@@ -39,56 +40,14 @@ protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UCharacterMovementComponent* CharacterMovement;
-
-	//Movement
-	UPROPERTY(Transient, BlueprintReadOnly)
-	float Speed;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	FVector Acceleration;
-
-	
 };
-
-//UCLASS()
-//class SHOOTER_API UShootyAnimInstance : public UAnimInstance
-//{
-//	GENERATED_BODY()
-//public:
-//	friend struct FBaseAnimInstanceProxy;
-//
-//protected:
-//	UPROPERTY(Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-//	FBaseAnimInstanceProxy Proxy;
-//
-//	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override { return &Proxy; }
-//	virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* InProxy) override {}
-//
-//	UPROPERTY(Transient, BlueprintReadOnly)
-//	AShooty* Owner;
-//
-//	// Movement
-//	UPROPERTY(Transient, EditAnywhere, BlueprintReadOnly)
-//	float Speed;
-//
-//	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite)
-//	FVector 
-//	C_Velocity;
-//	UPROPERTY(Transient, BlueprintReadOnly)
-//	FVector C_Velocity2D;
-//
-//	UPROPERTY(Transient, EditAnywhere, BlueprintReadOnly)
-//	FVector Acceleration;
-//
-//	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
-//	void SetVelocity();
-//};
 
 UCLASS()
 class SHOOTER_API UShootyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
+	
 	friend struct FBaseAnimInstanceProxy;
 
 protected:
@@ -98,31 +57,39 @@ protected:
 	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override { return &Proxy; }
 	virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* InProxy) override {}
 
-	//virtual void NativeUpdateAnimation(float _DeltaSeconds) override;
-
-	//virtual void NativeThreadSafeUpdateAnimation(float _DeltaSeconds) override;
-
-
-	//virtual void NativePostEvaluateAnimation() override;
+	virtual void NativeBeginPlay() override;
+	virtual void NativeThreadSafeUpdateAnimation(float _DeltaSeconds) override;
+	// For test purpose:
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	AShooty* Owner;
 
-	//TODO: Integrate into BP.
-	// Movement
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadOnly)
-	float Speed;
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UCharacterMovementComponent* CharacterMovement;
 
-	// TODO: Still have another velocity in BP for testing.
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite)
-	FVector C_Velocity;
+	// Locomotion
+		// TODO: Still have another velocity in BP for testing.
+	// Used for walking direction, not jumping!
 	UPROPERTY(Transient, BlueprintReadOnly)
 	FVector C_Velocity2D;
 
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadOnly)
-	FVector Acceleration;
+	UPROPERTY(Transient, BlueprintReadOnly)
+	FRotator CharacterWorldRotation;
 
+	// Set by evaluating Acceleration.
+	UPROPERTY(Transient, BlueprintReadOnly)
+	bool IsMoving;
+
+	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
-	void SetVelocity();
+	void UpdateVelocity();
+
+private:
+	FVector C_Acceleration2D;
+
+	void UpdateCharacterWorldRotation();
+
+	void UpdateMovementStatus();
 };
