@@ -11,6 +11,17 @@
 #include "Shooty.h"
 
 #include "ShootyAnimInstance.generated.h"
+
+UENUM(Blueprinttype)
+enum class E_MovementDirection : uint8
+{
+	Forewards   UMETA(DisplayName = "F"),
+	Backwards   UMETA(DisplayName = "B"),
+	Left		UMETA(DisplayName = "L"),
+	Right		UMETA(DisplayName = "R"),
+};
+
+
 class UShootyAnimInstance;
 
 // TODO: Remove Proxy and use NativeThreadSafeUpdateAnimation instead.
@@ -82,12 +93,16 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	bool IsMoving;
 
+	UPROPERTY(Transient, BlueprintReadOnly)
+	E_MovementDirection MovementDirection;
+
 	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
-	void UpdateVelocity();
+	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
 
 private:
 	FVector C_Acceleration2D;
+	void UpdateVelocity();
 
 	void UpdateCharacterWorldRotation();
 

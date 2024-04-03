@@ -60,24 +60,35 @@ void UShootyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 }
 
+void UShootyAnimInstance::CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax)
+{
+	//TODO: Should I check that angle is in the right range?
+	// Backwards:
+	if (locomationAngle <= BMin || locomationAngle >= BMax)
+		MovementDirection = E_MovementDirection::Backwards;
+	// Forwards:
+	else if (locomationAngle >= FMin && locomationAngle <= FMax)
+		MovementDirection = E_MovementDirection::Forewards;
+	// Left:
+	else if (locomationAngle <= FMin && locomationAngle >= BMin)
+		MovementDirection = E_MovementDirection::Left;
+	//Right:
+	else
+		MovementDirection = E_MovementDirection::Right;
+}
+
 void UShootyAnimInstance::UpdateVelocity()
 {
-	// Trace Tag for Animation Insights
-	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateVelocity");
 	C_Velocity2D = FVector(CharacterMovement->Velocity.X, CharacterMovement->Velocity.Y, 0.0f);
 }
 
 void UShootyAnimInstance::UpdateCharacterWorldRotation()
 {
-	// Trace Tag for Animation Insights
-	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateRotation");
 	CharacterWorldRotation = Owner->GetActorRotation();
 }
 
 void UShootyAnimInstance::UpdateMovementStatus()
 {
-	// Trace Tag for Animation Insights
-	TRACE_CPUPROFILER_EVENT_SCOPE_STR("UpdateMovementStatus");
 	//Only eveluate walking movementnot jumping.
 	C_Acceleration2D = FVector(CharacterMovement->GetCurrentAcceleration().X, CharacterMovement->GetCurrentAcceleration().Y, 0.0f);
 	// If Acceleration vetor length is close to 0 no movement happens.
