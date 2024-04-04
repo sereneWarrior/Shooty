@@ -67,6 +67,9 @@ void AShooty::BeginPlay()
 	auto CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 	CameraManager->ViewPitchMax = ViewPitchMax;
 	CameraManager->ViewPitchMin = ViewPitchMin;
+
+	// Set Gait to Walking. 
+	//UpdateGait(EGaitTEST::Walking);
 }
 
 // Called every frame
@@ -87,6 +90,10 @@ void AShooty::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooty::Look);
 
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooty::Move);
+		
+		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Started, this, &AShooty::UpdateGait, EGait::Jogging);
+		// TODO: Are there cases where I not return into Walking?
+		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Completed, this, &AShooty::UpdateGait, EGait::Walking);
 	}
 
 }
@@ -112,10 +119,6 @@ void AShooty::Move(const FInputActionValue& Value)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = BackwardsWalkingSpeed;
 	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = ForwardWalkingSpeed;
-	}
 
 	if (Controller != nullptr)
 	{
@@ -126,6 +129,21 @@ void AShooty::Move(const FInputActionValue& Value)
 		AddMovementInput(UKismetMathLibrary::GetRightVector(Rotation), MoveAxisVector.X);
 		AddMovementInput(UKismetMathLibrary::GetForwardVector(Rotation), MoveAxisVector.Y);
 	}
+}
+
+void  AShooty::UpdateGait(const FInputActionValue& Value,const EGait newGait)
+{
+	CurrentGait = newGait;
+	// Update CharacterMovement depending on responding Gait Settings.
+	auto setting = GaitSettings.Find(newGait);
+	// TODO: Should walking backwards get extra entry?
+		// Creating custom character movement?
+	GetCharacterMovement()->MaxWalkSpeed = setting->MaxWalkSpeed;
+	GetCharacterMovement()->MaxAcceleration = setting->MaxAcceleration;
+	GetCharacterMovement()->BrakingDecelerationWalking = setting->BrakingDeceleration;
+	GetCharacterMovement()->BrakingFriction = setting->BrakingFriction;
+	GetCharacterMovement()->bUseSeparateBrakingFriction = setting->UseSeperateBreakingFriction;
+	GetCharacterMovement()->BrakingFrictionFactor = setting->BrakingFrictionFactor;
 }
 
 

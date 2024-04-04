@@ -4,38 +4,6 @@
 #include "ShootyAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 
-// TODO: Is this needed?
-void FBaseAnimInstanceProxy::SetVelocityData()
-{
-	TRACE_CPUPROFILER_EVENT_SCOPE_STR("FBaseAnimInstanceProxy::SetVelocityData");
-	if (!CharacterMovement)
-		return;
-	//OwnerAnimInstance->C_Velocity = CharacterMovement->Velocity;
-	//OwnerAnimInstance->C_Velocity2D = FVector(OwnerAnimInstance->C_Velocity.X, OwnerAnimInstance->C_Velocity.Y, 0.0f);
-}
-
-void FBaseAnimInstanceProxy::Initialize(UAnimInstance* AnimInstance)
-{
-	Super::Initialize(AnimInstance);
-	if (!AnimInstance) return;
-	
-	OwnerAnimInstance = Cast<UShootyAnimInstance>(AnimInstance);
-	// TODO: DO I need this cast? This should do:
-	// Cast<ACharacterMovementComponent>(OwnerAnimInstance->TryGetPawnOwner()->GetMovementComponent());
-	OwnerAnimInstance->Owner = Cast<AShooty>(Owner);
-	if (Owner)
-	{
-		CharacterMovement = Owner->GetCharacterMovement();
-		//Owner = Cast<AShooty>(Owner);
-	}
-}
-
-void FBaseAnimInstanceProxy::Update(float DeltaSeconds)
-{
-	SetVelocityData();
-}
-
-
 void UShootyAnimInstance::NativeBeginPlay()
 {
 	Owner = Cast<AShooty>(GetOwningActor());

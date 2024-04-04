@@ -21,38 +21,6 @@ enum class E_MovementDirection : uint8
 	Right		UMETA(DisplayName = "R"),
 };
 
-
-class UShootyAnimInstance;
-
-// TODO: Remove Proxy and use NativeThreadSafeUpdateAnimation instead.
-USTRUCT(BlueprintType)
-struct SHOOTER_API FBaseAnimInstanceProxy : public FAnimInstanceProxy
-{
-	GENERATED_USTRUCT_BODY()
-
-	void SetVelocityData();
-protected:
-
-	// Called on AnimInstance initialisation.
-	virtual void Initialize(UAnimInstance* AnimInstance) override;
-	// Runs on Anim thread, does calculations and updates varaibles inside proxy.
-	virtual void Update(float DeltaSeconds) override;
-	//// Called on gamethrerad before update, to copy any game data into proxy (anim instance, character, world etc.)
-	//virtual void PreUpdate(UAnimInstance* AnimInstance, float DeltaSeconds) override;
-	////Called on game thread, after update to copy updated data into anim instance
-	//virtual void PostUpdate(UAnimInstance* AnimInstance) const override;
-
-	//General
-	UPROPERTY(Transient)
-	UShootyAnimInstance* OwnerAnimInstance;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	AShooty* Owner;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	UCharacterMovementComponent* CharacterMovement;
-};
-
 UCLASS()
 class SHOOTER_API UShootyAnimInstance : public UAnimInstance
 {
@@ -62,12 +30,7 @@ public:
 	friend struct FBaseAnimInstanceProxy;
 
 protected:
-	UPROPERTY(Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FBaseAnimInstanceProxy Proxy;
-
-	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override { return &Proxy; }
-	virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* InProxy) override {}
-
+	
 	virtual void NativeBeginPlay() override;
 	virtual void NativeThreadSafeUpdateAnimation(float _DeltaSeconds) override;
 	// For test purpose:
@@ -81,10 +44,10 @@ protected:
 	UCharacterMovementComponent* CharacterMovement;
 
 	// Locomotion
-		// TODO: Still have another velocity in BP for testing.
+	
 	// Used for walking direction, not jumping!
 	UPROPERTY(Transient, BlueprintReadOnly)
-	FVector C_Velocity2D;
+	FVector C_Velocity2D;	// TODO: Still have another velocity in BP for testing.
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	FRotator CharacterWorldRotation;
