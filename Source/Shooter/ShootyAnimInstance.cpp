@@ -4,6 +4,11 @@
 #include "ShootyAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 
+void UShootyAnimInstance::ReceiveGaitStatus(EGait gaitStatus)
+{
+	CurrentGait = gaitStatus;
+}
+
 void UShootyAnimInstance::NativeBeginPlay()
 {
 	Owner = Cast<AShooty>(GetOwningActor());

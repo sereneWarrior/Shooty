@@ -13,6 +13,7 @@
 #include "EnhancedInputSubsystems.h"
 #include <Kismet/KismetMathLibrary.h>
 #include <Kismet/GameplayStatics.h>
+#include "ShootyAnimInstance.h"
 
 
 // Sets default values
@@ -30,7 +31,7 @@ AShooty::AShooty()
 	// TODO: Toggle when moving.
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	//GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	GetMesh();
+	Body = GetMesh();
 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
@@ -144,6 +145,15 @@ void  AShooty::UpdateGait(const FInputActionValue& Value,const EGait newGait)
 	GetCharacterMovement()->BrakingFriction = setting->BrakingFriction;
 	GetCharacterMovement()->bUseSeparateBrakingFriction = setting->UseSeperateBreakingFriction;
 	GetCharacterMovement()->BrakingFrictionFactor = setting->BrakingFrictionFactor;
+
+	// Update CurrentGait in AnimInstance
+	// TODO: Do I need the interface here?
+	UShootyAnimInstance* animInstance = Cast<UShootyAnimInstance>(Body->GetAnimInstance());
+	if (animInstance->Implements<UGait>())
+	{
+		Cast<IGait>(Cast<UShootyAnimInstance>(Body->GetAnimInstance()))->ReceiveGaitStatus(newGait);
+	}
+	
 }
 
 

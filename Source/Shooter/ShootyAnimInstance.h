@@ -6,9 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Animation/AnimInstanceProxy.h"
-
 #include "Shooty.h"
+#include "Gait.h"
 
 #include "ShootyAnimInstance.generated.h"
 
@@ -22,12 +21,11 @@ enum class E_MovementDirection : uint8
 };
 
 UCLASS()
-class SHOOTER_API UShootyAnimInstance : public UAnimInstance
+class SHOOTER_API UShootyAnimInstance : public UAnimInstance, public IGait
 {
 	GENERATED_BODY()
 public:
-	
-	friend struct FBaseAnimInstanceProxy;
+	virtual void ReceiveGaitStatus(EGait gaitStatus) override;
 
 protected:
 	
@@ -59,12 +57,16 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	E_MovementDirection MovementDirection;
 
+	UPROPERTY(BlueprintReadOnly)
+	EGait CurrentGait;
+
 	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
 
 private:
 	FVector C_Acceleration2D;
+
 	void UpdateVelocity();
 
 	void UpdateCharacterWorldRotation();
