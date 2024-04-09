@@ -23,6 +23,7 @@ void UExtendedMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVe
 	if (MovementMode != MOVE_Walking)
 		return;
 
+	// Check for backwards movement. 
 	if (Velocity.X <0)
 	{
 		MaxWalkSpeed = bIsJogging ? MaxBackwardsSpeed_Jog : MaxBackwardsSpeed_Walk;

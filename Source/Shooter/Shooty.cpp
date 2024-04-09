@@ -25,8 +25,6 @@ AShooty::AShooty(const FObjectInitializer& ObjectInitializer)
 	{
 		ExtendedCharacterMovement->UpdatedComponent =GetCapsuleComponent();
 	}
-		
-
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -77,12 +75,6 @@ void AShooty::BeginPlay()
 	auto CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 	CameraManager->ViewPitchMax = ViewPitchMax;
 	CameraManager->ViewPitchMin = ViewPitchMin;
-
-	if(ExtendedCharacterMovement == nullptr)
-		UE_LOG(LogTemp, Warning, TEXT("SAMAE"));
-
-	// Set Gait to Walking. 
-	//UpdateGait(EGaitTEST::Walking);
 }
 
 // Called every frame
@@ -127,16 +119,6 @@ void AShooty::Move(const FInputActionValue& Value)
 	
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	
-	// Change walk speed when moving backwards.
-	//if (MoveAxisVector.Y < 0)
-	//{
-	//	//NO!
-	//	ExtendedCharacterMovement->BackwardsPressed();
-	//}
-	//ExtendedCharacterMovement->BackwardsReleased();
-	//Setting Movement mode instead of using Map.
-	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Swimming);
-
 	if (Controller != nullptr)
 	{
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -164,8 +146,6 @@ void  AShooty::UpdateGait(const EGait newGait)
 {
 	
 	// Update CurrentGait in AnimInstance
-	// TODO: Do I need the interface here?
-	
 	if (UShootyAnimInstance* animInstance = Cast<UShootyAnimInstance>(Body->GetAnimInstance()))
 	{
 		animInstance->ReceiveGaitStatus(newGait);
