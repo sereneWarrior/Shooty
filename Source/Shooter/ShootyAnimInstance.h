@@ -21,11 +21,12 @@ enum class E_MovementDirection : uint8
 };
 
 UCLASS()
-class SHOOTER_API UShootyAnimInstance : public UAnimInstance, public IGait
+class SHOOTER_API UShootyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+
 public:
-	virtual void ReceiveGaitStatus(EGait gaitStatus) override;
+	void ReceiveGaitStatus(EGait gaitStatus);
 
 protected:
 	

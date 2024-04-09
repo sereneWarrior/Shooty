@@ -24,6 +24,6 @@ class SHOOTER_API IGait
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void ReceiveGaitStatus(EGait gaitStatus);
+	virtual void ReceiveGaitStatus(EGait gaitStatus) =0;
 
 };

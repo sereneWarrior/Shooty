@@ -35,7 +35,7 @@ void UShootyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UShootyAnimInstance::CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax)
 {
-	//TODO: Should I check that angle is in the right range?
+	//TODO: Should I check that angle is in the right range?<=180/>=-180
 	// Backwards:
 	if (locomationAngle <= BMin || locomationAngle >= BMax)
 		MovementDirection = E_MovementDirection::Backwards;

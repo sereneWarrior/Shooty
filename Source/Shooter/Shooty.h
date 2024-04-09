@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "ExtendedMovementComponent.h"
 
 #include "Shooty.generated.h"
 
@@ -48,6 +49,9 @@ class SHOOTER_API AShooty : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UExtendedMovementComponent> ExtendedCharacterMovement;
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -84,12 +88,9 @@ class SHOOTER_API AShooty : public ACharacter
 	UPROPERTY(Category = Movement, EditAnywhere)
 	float BackwardsWalkingSpeed = 45.0f;
 
-	UPROPERTY(Category = Movement, EditAnywhere)
-	float ForwardWalkingSpeed = 250.0f;
-
 public:
 	// Sets default values for this character's properties
-	AShooty();
+	AShooty(const FObjectInitializer& ObjectInitializer);
 
 	/*CAMERA*/
 	UPROPERTY(Category = Camera, EditAnywhere)
@@ -98,15 +99,10 @@ public:
 	UPROPERTY(Category = Camera, EditAnywhere)
 	float ViewPitchMin = -40.0f;
 
-	/*GAIT SETTINGS*/
-	UPROPERTY(Category = Movement, BlueprintReadWrite)
-	TMap<EGait, FGaitSetting> GaitSettings;
-
-	UPROPERTY(Category = Movement, BlueprintReadWrite)
-	EGait CurrentGait;
-
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
+	void StartJog(const FInputActionValue& Value);
+	void StopJog(const FInputActionValue& Value);
 
 protected:
 	// Called when the game starts or when spawned
@@ -121,5 +117,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	void UpdateGait(const FInputActionValue& Value, const EGait newGait);
+	void UpdateGait(const EGait newGait);
 };

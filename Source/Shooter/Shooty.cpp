@@ -17,8 +17,17 @@
 
 
 // Sets default values
-AShooty::AShooty()
+AShooty::AShooty(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer.SetDefaultSubobjectClass<UExtendedMovementComponent>(CharacterMovementComponentName))
 {
+	ExtendedCharacterMovement = Cast<UExtendedMovementComponent>(GetCharacterMovement());
+	if (ExtendedCharacterMovement)
+	{
+		ExtendedCharacterMovement->UpdatedComponent =GetCapsuleComponent();
+	}
+		
+
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -69,6 +78,9 @@ void AShooty::BeginPlay()
 	CameraManager->ViewPitchMax = ViewPitchMax;
 	CameraManager->ViewPitchMin = ViewPitchMin;
 
+	if(ExtendedCharacterMovement == nullptr)
+		UE_LOG(LogTemp, Warning, TEXT("SAMAE"));
+
 	// Set Gait to Walking. 
 	//UpdateGait(EGaitTEST::Walking);
 }
@@ -92,9 +104,9 @@ void AShooty::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooty::Move);
 		
-		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Started, this, &AShooty::UpdateGait, EGait::Jogging);
+		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Started, this, &AShooty::StartJog);
 		// TODO: Are there cases where I not return into Walking?
-		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Completed, this, &AShooty::UpdateGait, EGait::Walking);
+		EnhancedInputComponent->BindAction(JogAction, ETriggerEvent::Completed, this, &AShooty::StopJog);
 	}
 
 }
@@ -116,10 +128,14 @@ void AShooty::Move(const FInputActionValue& Value)
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	
 	// Change walk speed when moving backwards.
-	if (MoveAxisVector.Y < 0)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = BackwardsWalkingSpeed;
-	}
+	//if (MoveAxisVector.Y < 0)
+	//{
+	//	//NO!
+	//	ExtendedCharacterMovement->BackwardsPressed();
+	//}
+	//ExtendedCharacterMovement->BackwardsReleased();
+	//Setting Movement mode instead of using Map.
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Swimming);
 
 	if (Controller != nullptr)
 	{
@@ -132,26 +148,27 @@ void AShooty::Move(const FInputActionValue& Value)
 	}
 }
 
-void  AShooty::UpdateGait(const FInputActionValue& Value,const EGait newGait)
+void AShooty::StartJog(const FInputActionValue& Value)
 {
-	CurrentGait = newGait;
-	// Update CharacterMovement depending on responding Gait Settings.
-	auto setting = GaitSettings.Find(newGait);
-	// TODO: Should walking backwards get extra entry?
-		// Creating custom character movement?
-	GetCharacterMovement()->MaxWalkSpeed = setting->MaxWalkSpeed;
-	GetCharacterMovement()->MaxAcceleration = setting->MaxAcceleration;
-	GetCharacterMovement()->BrakingDecelerationWalking = setting->BrakingDeceleration;
-	GetCharacterMovement()->BrakingFriction = setting->BrakingFriction;
-	GetCharacterMovement()->bUseSeparateBrakingFriction = setting->UseSeperateBreakingFriction;
-	GetCharacterMovement()->BrakingFrictionFactor = setting->BrakingFrictionFactor;
+	ExtendedCharacterMovement->JogPressed();
+	UpdateGait(EGait::Jogging);
+}
 
+void AShooty::StopJog(const FInputActionValue& Value)
+{
+	ExtendedCharacterMovement->JogReleased();
+	UpdateGait(EGait::Walking);
+}
+
+void  AShooty::UpdateGait(const EGait newGait)
+{
+	
 	// Update CurrentGait in AnimInstance
 	// TODO: Do I need the interface here?
-	UShootyAnimInstance* animInstance = Cast<UShootyAnimInstance>(Body->GetAnimInstance());
-	if (animInstance->Implements<UGait>())
+	
+	if (UShootyAnimInstance* animInstance = Cast<UShootyAnimInstance>(Body->GetAnimInstance()))
 	{
-		Cast<IGait>(Cast<UShootyAnimInstance>(Body->GetAnimInstance()))->ReceiveGaitStatus(newGait);
+		animInstance->ReceiveGaitStatus(newGait);
 	}
 	
 }
