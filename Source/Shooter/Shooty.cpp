@@ -119,6 +119,9 @@ void AShooty::Move(const FInputActionValue& Value)
 	
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	
+	TRACE_CPUPROFILER_EVENT_SCOPE_STR("Move Input Shooty");
+	ExtendedCharacterMovement->IsMovingBackwards(MoveAxisVector.Y < 0);
+
 	if (Controller != nullptr)
 	{
 		const FRotator Rotation = Controller->GetControlRotation();

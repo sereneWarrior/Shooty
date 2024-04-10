@@ -35,6 +35,14 @@ void UShootyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UShootyAnimInstance::CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax)
 {
+	// ???
+	// Cast CharacterMovement to ExtendedMovementComponent in initialize method? or make class template. 
+	// Use own implementation if charcter movement is not ExtendedMovementComponent.
+	// MovementDirection = CharacterMovement->CalculateDirect(...);
+	// ???
+	// Set Backwards movement flag
+
+	
 	//TODO: Should I check that angle is in the right range?<=180/>=-180
 	// Backwards:
 	if (locomationAngle <= BMin || locomationAngle >= BMax)

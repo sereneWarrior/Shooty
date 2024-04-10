@@ -26,7 +26,7 @@ protected:
 	float MaxBackwardsSpeed_Walk = 45.0f;
 
 	bool bIsJogging;
-	bool bMoveBackwards;
+	bool bIsMovingBackwards;
 
 public:
 	UExtendedMovementComponent();
@@ -34,6 +34,7 @@ public:
 	/*Movement logic :*/ 
 	void JogPressed();
 	void JogReleased();
+	void IsMovingBackwards(bool movesBackwards);
 	
 protected:
 	/**

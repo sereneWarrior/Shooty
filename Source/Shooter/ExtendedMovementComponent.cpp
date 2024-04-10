@@ -18,18 +18,24 @@ void UExtendedMovementComponent::JogReleased()
 	bIsJogging = false;
 }
 
+void UExtendedMovementComponent::IsMovingBackwards(bool movesBackwards)
+{
+	bMovesBackwards = movesBackwards;
+}
+
 void UExtendedMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
 {
 	if (MovementMode != MOVE_Walking)
 		return;
 
-	// Check for backwards movement. 
-	if (Velocity.X <0)
+	// TODO: Is called every frame. Better if Speed is only set when Movementstatus changes.
+	if (bMovesBackwards)
 	{
 		MaxWalkSpeed = bIsJogging ? MaxBackwardsSpeed_Jog : MaxBackwardsSpeed_Walk;
 		return;
 	}
 	
+	// TODO:Move into pressed/ released function?
 	MaxWalkSpeed = bIsJogging ? MaxSpeed_Jog : MaxSpeed_Walk;
 	
 }
