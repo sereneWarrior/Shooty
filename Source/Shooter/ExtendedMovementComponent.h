@@ -6,6 +6,36 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ExtendedMovementComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FGaitSetting
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxWalkSpeed = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxBackwardsWalkSpeed = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxAcceleration = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BrakingDeceleration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BrakingFrictionFactor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool UseSeperateBreakingFriction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BrakingFriction;
+
+};
+
+UENUM(Blueprinttype)
+enum class EGait : uint8
+{
+	Walking   UMETA(DisplayName = "Walking"),
+	Jogging   UMETA(DisplayName = "Jogging"),
+
+};
+
 
 UCLASS()
 class SHOOTER_API UExtendedMovementComponent : public UCharacterMovementComponent
@@ -13,20 +43,14 @@ class SHOOTER_API UExtendedMovementComponent : public UCharacterMovementComponen
 	GENERATED_BODY()
 
 protected:
-	//TODO: Set backwards movement first.
-	//TODO: Also set acceleration etc here.
-	//TODO: Can I evaluate velocity directly here?
-	UPROPERTY (Category = "Shooty Movement: Jog", EditAnywhere)
-	float MaxSpeed_Jog = 750.0f;
-	UPROPERTY(Category = "Shooty Movement: Jog", EditDefaultsOnly)
-	float MaxBackwardsSpeed_Jog = 409.0f;
-	UPROPERTY(Category = "Shooty Movement: Walk", EditDefaultsOnly)
-	float MaxSpeed_Walk = 250.0f;
-	UPROPERTY(Category = "Shooty Movement: Walk", EditDefaultsOnly)
-	float MaxBackwardsSpeed_Walk = 45.0f;
+	UPROPERTY(Category = "Shooty Movement", EditAnywhere)
+	TMap<EGait, FGaitSetting> GaitSettings;
 
 	bool bIsJogging;
 	bool bIsMovingBackwards;
+
+	float MaxBackwardsWalkSpeed;
+	float MaxForewardsWalkSpeed;
 
 public:
 	UExtendedMovementComponent();
@@ -34,7 +58,10 @@ public:
 	/*Movement logic :*/ 
 	void JogPressed();
 	void JogReleased();
-	void IsMovingBackwards(bool movesBackwards);
+	void IsMovingBackwards(bool isMovingBackwards);
+
+	// Update Movement Speed etc. responding to Gait set by character class.
+	void SetGaitState(EGait movementStatus);
 	
 protected:
 	/**

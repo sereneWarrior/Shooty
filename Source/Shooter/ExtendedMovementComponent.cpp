@@ -4,23 +4,42 @@
 #include "ExtendedMovementComponent.h"
 #include "GameFramework/Character.h"
 
+
 UExtendedMovementComponent::UExtendedMovementComponent()
 {
 }
 
+void UExtendedMovementComponent::SetGaitState(EGait movementStatus)
+{
+	// TODO: Do I have to consider movement mode here
+	
+	if (FGaitSetting* setting = GaitSettings.Find(movementStatus))
+	{
+		MaxForewardsWalkSpeed = setting->MaxWalkSpeed;
+		MaxBackwardsWalkSpeed = setting->MaxBackwardsWalkSpeed;
+		MaxAcceleration = setting->MaxAcceleration;
+		BrakingDecelerationWalking = setting->BrakingDeceleration;
+		BrakingFriction = setting->BrakingFriction;
+		bUseSeparateBrakingFriction = setting->UseSeperateBreakingFriction;
+		BrakingFrictionFactor = setting->BrakingFrictionFactor;
+	}
+	
+	
+}
+
 void UExtendedMovementComponent::JogPressed()
 {
-	bIsJogging = true;
+	//bIsJogging = true;
 }
 
 void UExtendedMovementComponent::JogReleased()
 {
-	bIsJogging = false;
+	//bIsJogging = false;
 }
 
-void UExtendedMovementComponent::IsMovingBackwards(bool movesBackwards)
+void UExtendedMovementComponent::IsMovingBackwards(bool isMovingBackwards)
 {
-	bMovesBackwards = movesBackwards;
+	bIsMovingBackwards = isMovingBackwards;
 }
 
 void UExtendedMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
@@ -29,13 +48,6 @@ void UExtendedMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVe
 		return;
 
 	// TODO: Is called every frame. Better if Speed is only set when Movementstatus changes.
-	if (bMovesBackwards)
-	{
-		MaxWalkSpeed = bIsJogging ? MaxBackwardsSpeed_Jog : MaxBackwardsSpeed_Walk;
-		return;
-	}
-	
-	// TODO:Move into pressed/ released function?
-	MaxWalkSpeed = bIsJogging ? MaxSpeed_Jog : MaxSpeed_Walk;
-	
+	MaxWalkSpeed = bIsMovingBackwards ? MaxBackwardsWalkSpeed : MaxForewardsWalkSpeed;
+
 }

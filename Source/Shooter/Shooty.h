@@ -9,15 +9,6 @@
 
 #include "Shooty.generated.h"
 
-UENUM(Blueprinttype)
-enum class EGait : uint8
-{
-	Walking   UMETA(DisplayName = "Walking"),
-	Jogging   UMETA(DisplayName = "Jogging"),
-
-};
-
-
 UCLASS(config=Game)
 class SHOOTER_API AShooty : public ACharacter
 {

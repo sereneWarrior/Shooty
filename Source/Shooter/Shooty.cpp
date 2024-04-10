@@ -75,6 +75,9 @@ void AShooty::BeginPlay()
 	auto CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 	CameraManager->ViewPitchMax = ViewPitchMax;
 	CameraManager->ViewPitchMin = ViewPitchMin;
+
+	// Initialize Movement state
+	ExtendedCharacterMovement->SetGaitState(EGait::Walking);
 }
 
 // Called every frame
@@ -135,19 +138,19 @@ void AShooty::Move(const FInputActionValue& Value)
 
 void AShooty::StartJog(const FInputActionValue& Value)
 {
-	ExtendedCharacterMovement->JogPressed();
+	//ExtendedCharacterMovement->JogPressed();
 	UpdateGait(EGait::Jogging);
 }
 
 void AShooty::StopJog(const FInputActionValue& Value)
 {
-	ExtendedCharacterMovement->JogReleased();
+	//ExtendedCharacterMovement->JogReleased();
 	UpdateGait(EGait::Walking);
 }
 
 void  AShooty::UpdateGait(const EGait newGait)
 {
-	
+	ExtendedCharacterMovement->SetGaitState(newGait);
 	// Update CurrentGait in AnimInstance
 	if (UShootyAnimInstance* animInstance = Cast<UShootyAnimInstance>(Body->GetAnimInstance()))
 	{
