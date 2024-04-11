@@ -20,6 +20,13 @@ enum class E_MovementDirection : uint8
 	Right		UMETA(DisplayName = "R"),
 };
 
+UENUM(Blueprinttype)
+enum class E_HipFacingDirection : uint8
+{
+	Forewards   UMETA(DisplayName = "F"),
+	Backwards   UMETA(DisplayName = "B"),
+};
+
 UCLASS()
 class SHOOTER_API UShootyAnimInstance : public UAnimInstance
 {
@@ -58,6 +65,9 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	E_MovementDirection MovementDirection;
 
+	UPROPERTY(Transient, BlueprintReadOnly)
+	E_HipFacingDirection HipFacingDirection;
+
 	UPROPERTY(BlueprintReadOnly)
 	EGait CurrentGait;
 
@@ -65,6 +75,8 @@ protected:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
 
+	void CalculateHipFacingDirection(E_MovementDirection oldDirection, E_MovementDirection newDirection);
+		
 private:
 	FVector C_Acceleration2D;
 
