@@ -11,20 +11,16 @@
 
 #include "ShootyAnimInstance.generated.h"
 
+
 UENUM(Blueprinttype)
-enum class E_MovementDirection : uint8
+enum class E_Direction : uint8
 {
 	Forewards   UMETA(DisplayName = "F"),
 	Backwards   UMETA(DisplayName = "B"),
 	Left		UMETA(DisplayName = "L"),
 	Right		UMETA(DisplayName = "R"),
-};
-
-UENUM(Blueprinttype)
-enum class E_HipFacingDirection : uint8
-{
-	Forewards   UMETA(DisplayName = "F"),
-	Backwards   UMETA(DisplayName = "B"),
+	LeftBW		UMETA(DisplayName = "LB"),
+	RightBW		UMETA(DisplayName = "RB"),
 };
 
 UCLASS()
@@ -63,10 +59,7 @@ protected:
 	bool IsMoving;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	E_MovementDirection MovementDirection;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	E_HipFacingDirection HipFacingDirection;
+	E_Direction MovementDirection;
 
 	UPROPERTY(BlueprintReadOnly)
 	EGait CurrentGait;
@@ -74,9 +67,6 @@ protected:
 	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
-
-	void CalculateHipFacingDirection(E_MovementDirection oldDirection, E_MovementDirection newDirection);
-		
 private:
 	FVector C_Acceleration2D;
 

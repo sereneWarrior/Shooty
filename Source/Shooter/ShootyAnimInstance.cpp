@@ -38,27 +38,33 @@ void UShootyAnimInstance::CalculateMovementDirection(float locomationAngle, floa
 	//TODO: Should I check that angle is in the right range?<=180/>=-180
 	// Backwards:
 	if (locomationAngle <= BMin || locomationAngle >= BMax)
-	{
-		HipFacingDirection = E_HipFacingDirection::Backwards;
-		MovementDirection = E_MovementDirection::Backwards;
-	}
+		MovementDirection = E_Direction::Backwards;
 	// Forwards:
 	else if (locomationAngle >= FMin && locomationAngle <= FMax)
-	{
-		HipFacingDirection = E_HipFacingDirection::Forewards;
-		MovementDirection = E_MovementDirection::Forewards;
-	}
+		MovementDirection = E_Direction::Forewards;
 	// Left:
 	else if (locomationAngle <= FMin && locomationAngle >= BMin)
 	{
-		CalculateHipFacingDirection(MovementDirection, E_MovementDirection::Left);
-		MovementDirection = E_MovementDirection::Left;
+		if (MovementDirection == E_Direction::Right
+			|| MovementDirection == E_Direction::LeftBW
+			|| MovementDirection == E_Direction::Backwards)
+		{
+			MovementDirection = E_Direction::LeftBW;
+			return;
+		}
+		MovementDirection = E_Direction::Left;
 	}
 	//Right:
 	else
 	{
-		CalculateHipFacingDirection(MovementDirection, E_MovementDirection::Right);
-		MovementDirection = E_MovementDirection::Right;
+		if (MovementDirection == E_Direction::Left ||
+			MovementDirection == E_Direction::RightBW ||
+			MovementDirection == E_Direction::Backwards)
+		{
+			MovementDirection = E_Direction::RightBW;
+			return;
+		}
+		MovementDirection = E_Direction::Right;
 	}
 }
 
@@ -78,31 +84,4 @@ void UShootyAnimInstance::UpdateMovementStatus()
 	C_Acceleration2D = FVector(CharacterMovement->GetCurrentAcceleration().X, CharacterMovement->GetCurrentAcceleration().Y, 0.0f);
 	// If Acceleration vetor length is close to 0 no movement happens.
 	IsMoving = !FMath::IsNearlyEqual(C_Acceleration2D.Length(), 0.0f, 0.001f);
-}
-
-
-void UShootyAnimInstance::CalculateHipFacingDirection(E_MovementDirection oldDirection, E_MovementDirection newDirection) {
-	// If previous MovementDirection was F or B just take the same value
-
-	if (oldDirection == newDirection)
-		return;
-
-	switch (oldDirection)
-	{
-	case E_MovementDirection::Forewards:
-		HipFacingDirection = E_HipFacingDirection::Forewards;
-		break;
-	case E_MovementDirection::Backwards:
-		HipFacingDirection = E_HipFacingDirection::Backwards;
-		break;
-	case E_MovementDirection::Left:
-	case E_MovementDirection::Right:
-		// TODO: Create ReverseHipFacingDirection method.
-		if (HipFacingDirection == E_HipFacingDirection::Forewards)
-			HipFacingDirection = E_HipFacingDirection::Backwards;
-		else
-			HipFacingDirection = E_HipFacingDirection::Forewards;
-		break;
-	}
-
 }
