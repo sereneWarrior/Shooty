@@ -16,7 +16,7 @@ struct FGaitSetting
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxBackwardsWalkSpeed = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxAcceleration = 0.0f;
+	float MaxAcceleration;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float BrakingDeceleration;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

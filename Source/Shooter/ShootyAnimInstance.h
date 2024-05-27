@@ -49,30 +49,47 @@ protected:
 	
 	// Used for walking direction, not jumping!
 	UPROPERTY(Transient, BlueprintReadOnly)
-	FVector C_Velocity2D;	// TODO: Still have another velocity in BP for testing.
+	FVector C_Velocity2D;	// TODO: Still have another velocity in BP for testing. Remove!
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	FRotator CharacterWorldRotation;
 
 	// Set by evaluating Acceleration.
 	UPROPERTY(Transient, BlueprintReadOnly)
-	bool IsMoving;
+	bool IsAccelerating;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	FVector PhysicalAcceleration2D;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	E_Direction MovementDirection;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly)
 	EGait CurrentGait;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	float LeanAngle = 0.0f;
 
 	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
 private:
 	FVector C_Acceleration2D;
+	float prevVelocity = 0.0f;
 
 	void UpdateVelocity();
+	
+	/*
+	* Character Rotation for driving torso rotation according to controller movement during movement.
+	*/
+	void UpdateCharacterWorldRotation(float _DeltaSeconds);
 
-	void UpdateCharacterWorldRotation();
+	/*
+	* Character Acceleration for driving Leaning.
+	*/
+	void UpdateAcceleration(float _DeltaSeconds);
 
 	void UpdateMovementStatus();
+	
+	FVector CalculatePhysicalAcceleration(FVector Velocity_delta, float AccelerationValue);
 };
