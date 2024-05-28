@@ -38,58 +38,61 @@ protected:
 	// For test purpose:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+protected:
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	/*
+	* Character related properties.
+	*/
+	UPROPERTY(BlueprintReadOnly)
 	AShooty* Owner;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* CharacterMovement;
 
-	// Locomotion
-	
-	// Used for walking direction, not jumping!
-	UPROPERTY(Transient, BlueprintReadOnly)
-	FVector C_Velocity2D;	// TODO: Still have another velocity in BP for testing. Remove!
+	/*
+	* Locomotion system related
+	*/
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	// Used for walking direction, not jumping!
+	UPROPERTY(BlueprintReadOnly, Category = "Velocity")
+	FVector Velocity2D;
+
+	UPROPERTY(BlueprintReadOnly)
 	FRotator CharacterWorldRotation;
 
 	// Set by evaluating Acceleration.
-	UPROPERTY(Transient, BlueprintReadOnly)
-	bool IsAccelerating;
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsAccelerating;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
-	FVector PhysicalAcceleration2D;
+	UPROPERTY(BlueprintReadOnly)
+	FVector RelativeAcceleration2D;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	E_Direction MovementDirection;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	EGait CurrentGait;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
-	float LeanAngle = 0.0f;
+	UPROPERTY(BlueprintReadOnly)
+	float LeanAngle;
+
+	//____________________________________________________________________________
 
 	//  meta = (BlueprintThreadSafe) to call it in BP as Thread Safe animation
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void CalculateMovementDirection(float locomationAngle, float FMin, float FMax, float BMin, float BMax);
+
 private:
-	FVector C_Acceleration2D;
-	float prevVelocity = 0.0f;
+	// Character Rotation for driving torso rotation according to controller movement during movement.
+	void UpdateRotationAndProcessDelta(float _DeltaSeconds);
+	void CalculateLeanAngle(double prev_yaw, float _DeltaSeconds);
 
-	void UpdateVelocity();
-	
-	/*
-	* Character Rotation for driving torso rotation according to controller movement during movement.
-	*/
-	void UpdateCharacterWorldRotation(float _DeltaSeconds);
-
-	/*
-	* Character Acceleration for driving Leaning.
-	*/
-	void UpdateAcceleration(float _DeltaSeconds);
+	//Character Acceleration for driving Leaning motion.
+	void UpdateVelocity(float _DeltaSeconds);
+	void SetRelativeAcceleration(FVector delta_velocity, float _DeltaSeconds);
+	FVector ClampAcceleration(FVector Velocity_delta, float AccelerationValue);
 
 	void UpdateMovementStatus();
 	
-	FVector CalculatePhysicalAcceleration(FVector Velocity_delta, float AccelerationValue);
+	
 };
