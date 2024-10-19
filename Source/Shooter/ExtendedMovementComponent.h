@@ -28,11 +28,12 @@ struct FGaitSetting
 
 };
 
+// Values are set to work with the Leaning blendspace.
 UENUM(Blueprinttype)
 enum class EGait : uint8
 {
-	Walking   UMETA(DisplayName = "Walking"),
-	Jogging   UMETA(DisplayName = "Jogging"),
+	Walking  UMETA(DisplayName = "Walking"),
+	Jogging  UMETA(DisplayName = "Jogging"),
 
 };
 
