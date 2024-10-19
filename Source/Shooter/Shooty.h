@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "ExtendedMovementComponent.h"
+#include "Engine.h"
 
 #include "Shooty.generated.h"
 
@@ -13,6 +14,7 @@ UCLASS(config=Game)
 class SHOOTER_API AShooty : public ACharacter
 {
 	GENERATED_BODY()
+
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UExtendedMovementComponent> ExtendedCharacterMovement;
@@ -25,6 +27,8 @@ class SHOOTER_API AShooty : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+protected:
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -33,9 +37,7 @@ class SHOOTER_API AShooty : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
 
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -49,8 +51,13 @@ class SHOOTER_API AShooty : public ACharacter
 	TObjectPtr<USkeletalMeshComponent> Body;
 
 public:
+
+	AShooty() { Super(); };
 	// Sets default values for this character's properties
 	AShooty(const FObjectInitializer& ObjectInitializer);
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* MoveAction;
 
 	/*CAMERA*/
 	UPROPERTY(Category = Camera, EditAnywhere)

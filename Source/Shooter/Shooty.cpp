@@ -60,11 +60,14 @@ AShooty::AShooty(const FObjectInitializer& ObjectInitializer)
 void AShooty::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	// Set up input mapping context.
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
+		
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{			
+		{		
+			
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
@@ -88,8 +91,10 @@ void AShooty::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AShooty::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("SEtupInput"));
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -120,6 +125,7 @@ void AShooty::Move(const FInputActionValue& Value)
 	
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Move"));
 	TRACE_CPUPROFILER_EVENT_SCOPE_STR("Move Input Shooty");
 	ExtendedCharacterMovement->IsMovingBackwards(MoveAxisVector.Y < 0);
 
